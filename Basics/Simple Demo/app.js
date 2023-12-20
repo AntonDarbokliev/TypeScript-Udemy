@@ -1,7 +1,11 @@
 function add(num1, num2) {
-    return num1 + num2;
+    var result;
+    if (typeof num1 == 'number' && typeof num2 == 'number') {
+        result = num1 + num2;
+    }
+    else {
+        result = num1.toString() + num2.toString();
+    }
+    return result;
 }
-var num1 = 5;
-var num2 = 2.8;
-var res = add(num1, num2);
-console.log(res);
+console.log(add('anton', 'darbokliev'));
