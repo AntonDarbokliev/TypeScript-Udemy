@@ -1,11 +1,9 @@
 function add(num1, num2) {
-    var result;
-    if (typeof num1 == 'number' && typeof num2 == 'number') {
-        result = num1 + num2;
-    }
-    else {
-        result = num1.toString() + num2.toString();
-    }
-    return result;
+    return num1 + num2;
 }
-console.log(add('anton', 'darbokliev'));
+function printRes(result) {
+    console.log('Result: ' + result);
+}
+var combineValues;
+combineValues = add;
+printRes(combineValues(1, 2));
