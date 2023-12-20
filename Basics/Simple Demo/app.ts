@@ -1,13 +1,23 @@
-function add (num1 : number,num2: number){
-    return num1 + num2
+let input:unknown;
+
+let userName:string;
+
+// input = 5
+input = 'Name'
+
+// userName = input  Can't assign values like this if the assigned value 
+
+if(typeof input == 'string'){
+    userName = input //Can assign like this if you check for the right value
 }
 
-function printRes (result : number) : void {
-    console.log('Result: ' + result);
+
+function errorHandling(message: string, code: number): never { //Type never because there is now way for the function to return anything
+    throw {message,code}
 }
 
-let combineValues: (a: number,b:number) => number;
+errorHandling('Error',15)
 
-combineValues = add
-
-printRes(combineValues(1,2))
+// function noReturn() : never{
+//     while(true){}
+// }

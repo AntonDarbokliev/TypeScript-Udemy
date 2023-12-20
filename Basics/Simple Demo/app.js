@@ -1,9 +1,15 @@
-function add(num1, num2) {
-    return num1 + num2;
+var input;
+var userName;
+// input = 5
+input = 'Name';
+// userName = input  Can't assign values like this if the assigned value 
+if (typeof input == 'string') {
+    userName = input; //Can assign like this if you check for the right value
 }
-function printRes(result) {
-    console.log('Result: ' + result);
+function errorHandling(message, code) {
+    throw { message: message, code: code };
 }
-var combineValues;
-combineValues = add;
-printRes(combineValues(1, 2));
+errorHandling('Error', 15);
+// function noReturn() : never{
+//     while(true){}
+// }
