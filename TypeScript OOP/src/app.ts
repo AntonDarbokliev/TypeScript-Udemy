@@ -1,4 +1,4 @@
-class Department {
+abstract class Department {
     // name: string;
     protected employees : {}[];
     // location: string;
@@ -15,9 +15,7 @@ class Department {
     }
 
 
-    describe(this: Department) {
-        console.log(`This is the ${this.name} department`);
-    }
+    abstract describe(this: Department): void;
 
     addEmployee(employee:{name:string}){
         this.employees.push(employee)
@@ -46,6 +44,10 @@ class IT extends Department {
 
     addEmployee(employee: {name:string}) {
         this.employees.push(employee)
+    }
+
+    describe(this: Department): void {
+        console.log('This is the IT department');
     }
 }
 
