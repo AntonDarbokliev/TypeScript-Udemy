@@ -23,8 +23,19 @@ class Department {
 }
 
 class IT extends Department {
+    private tickets:string[]
+
+    get departmentTickets(): string[]{
+        return this.tickets
+    }
+
+    set departmentTickets(value:string[]){
+        this.tickets = value
+    }
+
     constructor(public readonly location: string){
         super('IT',location)
+        this.tickets = []
     }
 
     addEmployee(employee: string) {
@@ -55,5 +66,10 @@ const it = new IT('Plovdiv')
 
 it.addEmployee('Nasko')
 
-console.log(it);
+
+
+console.log(it.departmentTickets);
+it.departmentTickets = ['Problem1']
+console.log(it.departmentTickets);
+
 
