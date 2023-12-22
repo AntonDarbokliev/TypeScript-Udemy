@@ -1,11 +1,11 @@
 class Department {
-    name: string;
+    // name: string;
     private employees : string[];
-    location: string;
+    // location: string;
 
-    constructor(n: string, l: string,) {
-        this.name = n;
-        this.location = l;
+    constructor(public readonly name: string, public location: string) {
+        this.name = name;
+        this.location = location;
         this.employees = []
     }
 
@@ -22,16 +22,22 @@ class Department {
     }
 }
 
-const accounting = new Department("Accounting", "Brooklyn");
+class IT extends Department {
+    constructor(public readonly location: string){
+        super('IT',location)
+    }
+}
 
-accounting.addEmployee('Anton')
-accounting.addEmployee('Max')
+// const accounting = new Department("Accounting", "Brooklyn");
+
+// accounting.addEmployee('Anton')
+// accounting.addEmployee('Max')
 // accounting.employees.push('Ben') 
 // Not a good idea to have two ways of adding an employee, hence why we're making it a private propertie
 
-accounting.printEmployees()
+// accounting.printEmployees()
 
-accounting.describe();
+// accounting.describe();
 
 // const accountingCopy = {
 //     name: "Accounting",
@@ -40,3 +46,10 @@ accounting.describe();
 // };
 
 // accountingCopy.describe();
+
+const it = new IT('Plovdiv')
+
+it.addEmployee('Nasko')
+
+console.log(it);
+
