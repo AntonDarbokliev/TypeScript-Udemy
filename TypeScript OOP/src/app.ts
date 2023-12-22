@@ -1,6 +1,6 @@
 class Department {
     // name: string;
-    private employees : string[];
+    protected employees : string[];
     // location: string;
 
     constructor(public readonly name: string, public location: string) {
@@ -25,6 +25,10 @@ class Department {
 class IT extends Department {
     constructor(public readonly location: string){
         super('IT',location)
+    }
+
+    addEmployee(employee: string) {
+        this.employees.push('It employee: ' + employee)
     }
 }
 
