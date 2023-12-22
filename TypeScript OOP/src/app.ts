@@ -28,6 +28,14 @@ abstract class Department {
 
 class IT extends Department {
     private tickets:string[]
+    private static instance : IT;
+
+    static getInstance(){
+        if(this.instance){
+            return this.instance
+        }
+        return new IT('Brooklyn')
+    }
 
     get departmentTickets(): string[]{
         return this.tickets
@@ -37,7 +45,7 @@ class IT extends Department {
         this.tickets = value
     }
 
-    constructor(public readonly location: string){
+    private constructor(public readonly location: string){
         super('IT',location)
         this.tickets = []
     }
@@ -72,7 +80,11 @@ class IT extends Department {
 
 const employee = Department.createEmployee('Max')
 
-const it = new IT('Plovdiv')
+// const it = new IT('Plovdiv')
+const it = IT.getInstance()
+
+console.log(it);
+
 
 it.addEmployee(employee)
 
