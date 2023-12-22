@@ -1,7 +1,8 @@
 class Department {
     // name: string;
-    protected employees : string[];
+    protected employees : {}[];
     // location: string;
+    static fiscalYear = 2020
 
     constructor(public readonly name: string, public location: string) {
         this.name = name;
@@ -9,11 +10,16 @@ class Department {
         this.employees = []
     }
 
+    static createEmployee(name:string){
+        return{name}
+    }
+
+
     describe(this: Department) {
         console.log(`This is the ${this.name} department`);
     }
 
-    addEmployee(employee:string){
+    addEmployee(employee:{name:string}){
         this.employees.push(employee)
     }
 
@@ -38,8 +44,8 @@ class IT extends Department {
         this.tickets = []
     }
 
-    addEmployee(employee: string) {
-        this.employees.push('It employee: ' + employee)
+    addEmployee(employee: {name:string}) {
+        this.employees.push(employee)
     }
 }
 
@@ -62,14 +68,20 @@ class IT extends Department {
 
 // accountingCopy.describe();
 
+const employee = Department.createEmployee('Max')
+
 const it = new IT('Plovdiv')
 
-it.addEmployee('Nasko')
+it.addEmployee(employee)
+
+console.log(it);
 
 
+// console.log(Department.fiscalYear);
 
-console.log(it.departmentTickets);
-it.departmentTickets = ['Problem1']
-console.log(it.departmentTickets);
+
+// console.log(it.departmentTickets);
+// it.departmentTickets = ['Problem1']
+// console.log(it.departmentTickets);
 
 
