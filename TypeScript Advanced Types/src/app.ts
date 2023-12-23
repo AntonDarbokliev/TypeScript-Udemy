@@ -33,45 +33,71 @@ const emp: UnknownEmployee = {
 };
 
 const adminEmp: UnknownEmployee = {
-    name:'Bob',
-    privileges : ['Admin']
-}
+    name: "Bob",
+    privileges: ["Admin"],
+};
 
 // printEmployeeInfo(emp)
 // printEmployeeInfo(adminEmp)
 
-class Vehicle{
-    drive(){
-        console.log('Currently driving...');
+class Vehicle {
+    drive() {
+        console.log("Currently driving...");
     }
 }
 
 class Truck extends Vehicle {
-    load(amount:number){
-        console.log('Loading ' + amount + 'kg');
+    load(amount: number) {
+        console.log("Loading " + amount + "kg");
     }
 }
 
 class Boat extends Vehicle {
-    sail(){
-        console.log('Currently sailing');
+    sail() {
+        console.log("Currently sailing");
     }
 }
 
-type VehicleType = Truck | Boat
+type VehicleType = Truck | Boat;
 
-function useVehicle(vehicle: VehicleType){
+function useVehicle(vehicle: VehicleType) {
     vehicle.drive();
-    if(vehicle instanceof Boat){
-        vehicle.sail()
-    }else if(vehicle instanceof Truck){
+    if (vehicle instanceof Boat) {
+        vehicle.sail();
+    } else if (vehicle instanceof Truck) {
         vehicle.load(200);
     }
 }
 
-const v1 = new Truck()
-const v2 = new Boat()
- 
-useVehicle(v1)
-useVehicle(v2)
+const v1 = new Truck();
+const v2 = new Boat();
 
+useVehicle(v1);
+useVehicle(v2);
+
+interface Bird {
+    type: "bird";
+    flyingSpeed: number;
+}
+
+interface Horse {
+    type: "horse";
+    runningSpeed: number;
+}
+
+type Animal = Bird | Horse;
+
+function printAnimalSpeed(animal: Animal) {
+    let speed: number;
+    switch (animal.type) {
+        case "bird":
+            speed = animal.flyingSpeed;
+            break;
+        case "horse":
+            speed = animal.runningSpeed;
+            break;
+    }
+    console.log('Speed: ' +  speed);
+}
+
+printAnimalSpeed({type:'bird', flyingSpeed: 300})
