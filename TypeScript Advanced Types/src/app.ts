@@ -87,6 +87,8 @@ interface Horse {
 
 type Animal = Bird | Horse;
 
+
+//A different pattern for checking for a propretie
 function printAnimalSpeed(animal: Animal) {
     let speed: number;
     switch (animal.type) {
@@ -101,3 +103,9 @@ function printAnimalSpeed(animal: Animal) {
 }
 
 printAnimalSpeed({type:'bird', flyingSpeed: 300})
+
+const input = document.getElementById('inputText') as HTMLInputElement
+
+if(input){
+    input.value = 'Hi'
+}
