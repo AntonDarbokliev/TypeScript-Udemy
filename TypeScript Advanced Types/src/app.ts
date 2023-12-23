@@ -104,8 +104,36 @@ function printAnimalSpeed(animal: Animal) {
 
 printAnimalSpeed({type:'bird', flyingSpeed: 300})
 
-const input = document.getElementById('inputText') as HTMLInputElement
+const input = document.getElementById('inputText') as HTMLInputElement 
+// Type Casting - telling typescript what the type of the variable is if typescript can't figure that out
 
 if(input){
     input.value = 'Hi'
 }
+
+
+interface Errors{
+    [prop: string] : string
+}
+// This syntax allows me to have as many propreties as i like (suitable for scenarios where i don't know how many props i'm getting )
+//They need to fit into the criteria that i've set (pretty useful for showing multiple error messages)
+
+const errorsContainer:Errors = {
+    name: 'Name should be at least 3 characters long'
+} 
+
+type Combineable = string | number
+
+function add(n1:string,n2:string) : string  
+function add(n1:number,n2:number) : number
+// Function overloading (used to tell typescript about the return type in different scenarios so i can call specific methods)
+function add(n1:Combineable,n2:Combineable){
+    if(typeof n1 === 'string' || typeof n2 === 'string'){
+        return n1.toString() + n2.toString()
+    }
+    return n1 + n2
+}
+
+const result = add('Anton',' Darbokliev')
+
+result.split(' ')
