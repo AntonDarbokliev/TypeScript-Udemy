@@ -137,3 +137,12 @@ function add(n1:Combineable,n2:Combineable){
 const result = add('Anton',' Darbokliev')
 
 result.split(' ')
+
+const fetchedData = {
+    name: 'Anton',
+    job: {title: 'Front-End Trainee', company: "Kodar"}
+}
+
+console.log(fetchedData?.job?.title);
+// Optional chaining
+// (won't contine if the variable before the "?" is undefined, useful for when you are not sure if the data has arrived yet)
