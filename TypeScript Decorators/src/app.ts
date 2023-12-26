@@ -1,12 +1,15 @@
-function Logger(logString:string){
-    return function (constructor:Function){
-        console.log(logString);
-        console.log(constructor);
+function Logger(elementId:string){
+    return function (constructor:any){
+    const element = document.getElementById(elementId)
+    const p = new constructor()
+        if(element){
+            element.textContent = p.name
+        }    
     }
 }
 
 
-@Logger('LOG')
+@Logger('app')
 class Person {
     name = 'Max'
 
