@@ -1,5 +1,38 @@
 const app = document.getElementById("app");
 
+class ProjectState  {
+    private listeners :any[] = []
+    private projects:any[] = []
+    private static instance:ProjectState;
+
+    static getInstance(){
+        if(!this.instance){
+            this.instance = new ProjectState()
+        }
+        
+        return this.instance
+    }
+
+    addProject(title:string,description:string,numOfPeople:number){
+        const project = {
+            title,
+            description,
+            numOfPeople
+        }
+        this.projects.push(project)
+
+        for(const listenerFn of this.listeners){
+            listenerFn(this.projects.slice())
+        }
+    }
+
+    addListener(listenerFn:Function){
+        this.listeners.push(listenerFn)
+    }
+}
+
+const projectState = ProjectState.getInstance()
+
 interface Validatable {
     value: string | number;
     required?: boolean;
@@ -40,13 +73,32 @@ function AutoBind(_: any, _2: string, descriptor: PropertyDescriptor) {
 class ProjectList {
     templateElement: HTMLTemplateElement;
     element: HTMLTableSectionElement;
+    currentProjects: any[];
+
     constructor(private type: 'active' | 'finished'){
         this.templateElement = document.getElementById('project-list')! as HTMLTemplateElement
         this.element = document.importNode(this.templateElement.content, true).firstElementChild as HTMLTableSectionElement;
         this.element.id = this.type + '-projects'
 
+        this.currentProjects = []
+
+        projectState.addListener((projects:any[]) => {
+            this.currentProjects = projects
+            this.renderProjects()
+        })
+
         this.attach()
         this.filloutList()
+    }
+
+    private renderProjects(){
+        const listEl = document.getElementById(`${this.type}-projects-list`) as HTMLUListElement
+        for(const prjItem of this.currentProjects ){
+            const listItem = document.createElement('li')
+            listItem.textContent = prjItem.title
+            listEl.appendChild(listItem)
+        }
+
     }
 
     private filloutList(){
@@ -95,7 +147,7 @@ class ProjectInput {
         this.people.value = '';
     }
 
-    private getUserInput(): [string, string, number] | void {
+    private getUserInput(): [string, string, number] {
         const titleValue = this.title.value;
         const descriptionValue = this.description.value;
         const peopleValue = +this.people.value;
@@ -107,9 +159,8 @@ class ProjectInput {
             return [titleValue, descriptionValue, peopleValue];
         }else{
             alert('Inavlid input')
+            return ['Invalid','Invalid',0]
         }
-
-        //validate({value:titleValue,requried: true, minLength: 5})
 
     }
 
@@ -120,9 +171,9 @@ class ProjectInput {
     @AutoBind
     private submit(e: Event) {
         e.preventDefault();
-        const inputValues = this.getUserInput();
+        const [title,description,numOfPeople] = this.getUserInput();
 
-        console.log(inputValues);
+        projectState.addProject(title,description,numOfPeople)
         this.clearInputs()
     }
 }
