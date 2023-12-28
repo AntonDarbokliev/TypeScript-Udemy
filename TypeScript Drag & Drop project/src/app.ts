@@ -12,10 +12,21 @@ class Project {
         ){}
 }
 
-type Listener = (items: Project[]) => void
+type Listener<T> = (items: T[]) => void
 
-class ProjectState  {
-    private listeners :any[] = []
+abstract class State<T> {
+    protected listeners: Listener<T>[]
+
+    constructor(){
+        this.listeners = []
+    }
+
+    addListener(listenerFn:Listener<T>){
+        this.listeners.push(listenerFn)
+    }
+}
+
+class ProjectState extends State<Project> {
     private projects:Project[] = []
     private static instance:ProjectState;
 
@@ -39,9 +50,6 @@ class ProjectState  {
         }
     }
 
-    addListener(listenerFn:Function){
-        this.listeners.push(listenerFn)
-    }
 }
 
 const projectState = ProjectState.getInstance()
@@ -83,28 +91,43 @@ function AutoBind(_: any, _2: string, descriptor: PropertyDescriptor) {
     return newDescriptor;
 }
 
-class ProjectList {
+abstract class ProjectUI<T extends HTMLElement> {
     templateElement: HTMLTemplateElement;
-    element: HTMLTableSectionElement;
+    element: T;
+    elementId?: string;
+    beforeEnd: boolean;
+
+     constructor(templateId:string,beforeEnd:boolean,elementId?:string){
+        this.templateElement = document.getElementById(templateId)! as HTMLTemplateElement
+        this.element = document.importNode(this.templateElement.content, true).firstElementChild as T;
+
+        if(elementId){
+            this.element.id = elementId
+        } 
+
+        this.beforeEnd = beforeEnd
+
+        this.attach()
+     }
+
+     private attach() {
+        app!.insertAdjacentElement(this.beforeEnd ?  'beforeend': "afterbegin", this.element);
+    }
+
+    abstract configure?():void
+
+}
+
+class ProjectList extends ProjectUI<HTMLTableSectionElement> {
     currentProjects: Project[];
 
     constructor(private type: 'active' | 'finished'){
-        this.templateElement = document.getElementById('project-list')! as HTMLTemplateElement
-        this.element = document.importNode(this.templateElement.content, true).firstElementChild as HTMLTableSectionElement;
-        this.element.id = this.type + '-projects'
+        super('project-list',true,`${type}-projects`)
 
         this.currentProjects = []
 
-        projectState.addListener((projects:Project[]) => {                        
-            const filteredProjects = projects.filter(x =>ProjectStatus[x.status].toLowerCase() === this.type )
-            console.log(filteredProjects);
-            
-            this.currentProjects = filteredProjects
-            this.renderProjects()
-        })
-
-        this.attach()
-        this.filloutList()
+        this.configure()
+        
     }
 
     private renderProjects(){
@@ -119,33 +142,31 @@ class ProjectList {
 
     }
 
+    configure(): void {
+        projectState.addListener((projects:Project[]) => {                        
+            const filteredProjects = projects.filter(x =>ProjectStatus[x.status].toLowerCase() === this.type )
+            
+            this.currentProjects = filteredProjects
+            this.renderProjects()
+        })
+
+        this.filloutList()
+    }
+
     private filloutList(){
         this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + ' PROJECTS'
         this.element.querySelector('ul')!.id = `${this.type}-projects-list`
     }
-
-    private attach() {
-        app!.insertAdjacentElement('beforeend', this.element);
-    }
 }
 
 
-class ProjectInput {
-    inputElement: HTMLTemplateElement;
-    element: HTMLFormElement;
+class ProjectInput extends ProjectUI<HTMLFormElement> {
     title: HTMLInputElement;
     description: HTMLInputElement;
     people: HTMLInputElement;
     submitBtn: HTMLButtonElement;
     constructor() {
-        this.inputElement = document.getElementById(
-            "project-input"
-        )! as HTMLTemplateElement;
-        this.element = document.importNode(this.inputElement.content, true)
-            .firstElementChild as HTMLFormElement;
-        this.element.id = "user-input";
-
-        this.attach();
+        super("project-input",false,'user-input')
 
         this.title = document.getElementById("title")! as HTMLInputElement;
 
@@ -156,7 +177,8 @@ class ProjectInput {
 
         this.submitBtn = this.element.getElementsByTagName("button")[0];
 
-        this.submitBtn.addEventListener("click", this.submit);
+        this.configure()
+
     } 
 
     private clearInputs(){
@@ -181,8 +203,9 @@ class ProjectInput {
 
     }
 
-    private attach() {
-        app?.insertAdjacentElement("afterbegin", this.element);
+    configure(): void {
+        this.submitBtn.addEventListener("click", this.submit);
+        
     }
 
     @AutoBind
