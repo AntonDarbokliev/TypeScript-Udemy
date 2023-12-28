@@ -122,12 +122,31 @@ abstract class ProjectUI<T extends HTMLElement,U extends HTMLElement> {
 }
 
 class ListItem extends ProjectUI<HTMLLIElement,HTMLUListElement> {
-    constructor(textContent:string,hostId:string){
-        super('single-project',true,hostId)
-        this.element.textContent = textContent
+    private project: Project
+
+    get people(){
+        if(this.project.numOfPeople == 1){
+            return '1 person assigned'
+        }
+        return `${this.project.numOfPeople} people assigned`
+    }
+
+    constructor(hostId:string,project:Project){
+        super('single-project',true,hostId,)
+        this.project = project
+        console.log(this.element);
+        this.renderContent()
     }
 
     configure(): void {}
+
+    renderContent() {
+        this.element.querySelector('h2')!.textContent = this.project.title;
+        this.element.querySelector(
+          'h3'
+        )!.textContent = this.people;
+        this.element.querySelector('p')!.textContent = this.project.description;
+      }
 }
 
 class ProjectList extends ProjectUI<HTMLTableSectionElement,HTMLDivElement> {
@@ -158,7 +177,7 @@ class ProjectList extends ProjectUI<HTMLTableSectionElement,HTMLDivElement> {
         
         listEl.innerHTML = ''
         for(const prjItem of this.currentProjects ){
-            const listItem = new ListItem(prjItem.title,this.element.querySelector('ul')!.id)
+            const listItem = new ListItem(this.element.querySelector('ul')!.id,prjItem)
             listEl.appendChild(listItem.element)
         }
 
