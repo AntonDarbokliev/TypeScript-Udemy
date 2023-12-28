@@ -1,8 +1,22 @@
 const app = document.getElementById("app");
 
+enum ProjectStatus {Active,Finished}
+
+class Project {
+    constructor(
+        public title:string, 
+        public description: string, 
+        public numOfPeople: number,
+        public status: ProjectStatus,
+        public id: string
+        ){}
+}
+
+type Listener = (items: Project[]) => void
+
 class ProjectState  {
     private listeners :any[] = []
-    private projects:any[] = []
+    private projects:Project[] = []
     private static instance:ProjectState;
 
     static getInstance(){
@@ -14,12 +28,11 @@ class ProjectState  {
     }
 
     addProject(title:string,description:string,numOfPeople:number){
-        const project = {
-            title,
-            description,
-            numOfPeople
-        }
+
+        const project = new Project(title,description,numOfPeople,ProjectStatus.Active,Math.random().toString())
         this.projects.push(project)
+        console.log(project);
+        
 
         for(const listenerFn of this.listeners){
             listenerFn(this.projects.slice())
@@ -73,7 +86,7 @@ function AutoBind(_: any, _2: string, descriptor: PropertyDescriptor) {
 class ProjectList {
     templateElement: HTMLTemplateElement;
     element: HTMLTableSectionElement;
-    currentProjects: any[];
+    currentProjects: Project[];
 
     constructor(private type: 'active' | 'finished'){
         this.templateElement = document.getElementById('project-list')! as HTMLTemplateElement
@@ -82,8 +95,11 @@ class ProjectList {
 
         this.currentProjects = []
 
-        projectState.addListener((projects:any[]) => {
-            this.currentProjects = projects
+        projectState.addListener((projects:Project[]) => {                        
+            const filteredProjects = projects.filter(x =>ProjectStatus[x.status].toLowerCase() === this.type )
+            console.log(filteredProjects);
+            
+            this.currentProjects = filteredProjects
             this.renderProjects()
         })
 
@@ -92,7 +108,9 @@ class ProjectList {
     }
 
     private renderProjects(){
-        const listEl = document.getElementById(`${this.type}-projects-list`) as HTMLUListElement
+        const listEl = document.getElementById(`${this.type}-projects-list`) as HTMLUListElement        
+        
+        listEl.innerHTML = ''
         for(const prjItem of this.currentProjects ){
             const listItem = document.createElement('li')
             listItem.textContent = prjItem.title
@@ -147,7 +165,7 @@ class ProjectInput {
         this.people.value = '';
     }
 
-    private getUserInput(): [string, string, number] {
+    private getUserInput(): [string, string, number] | void {
         const titleValue = this.title.value;
         const descriptionValue = this.description.value;
         const peopleValue = +this.people.value;
@@ -159,7 +177,6 @@ class ProjectInput {
             return [titleValue, descriptionValue, peopleValue];
         }else{
             alert('Inavlid input')
-            return ['Invalid','Invalid',0]
         }
 
     }
@@ -171,7 +188,7 @@ class ProjectInput {
     @AutoBind
     private submit(e: Event) {
         e.preventDefault();
-        const [title,description,numOfPeople] = this.getUserInput();
+        const [title,description,numOfPeople] = this.getUserInput()!;
 
         projectState.addProject(title,description,numOfPeople)
         this.clearInputs()
