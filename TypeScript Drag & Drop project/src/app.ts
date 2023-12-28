@@ -91,15 +91,18 @@ function AutoBind(_: any, _2: string, descriptor: PropertyDescriptor) {
     return newDescriptor;
 }
 
-abstract class ProjectUI<T extends HTMLElement> {
+abstract class ProjectUI<T extends HTMLElement,U extends HTMLElement> {
     templateElement: HTMLTemplateElement;
     element: T;
     elementId?: string;
     beforeEnd: boolean;
+    hostElement: U;
 
-     constructor(templateId:string,beforeEnd:boolean,elementId?:string){
+     constructor(templateId:string,beforeEnd:boolean,hostElementId:string,elementId?:string){
         this.templateElement = document.getElementById(templateId)! as HTMLTemplateElement
         this.element = document.importNode(this.templateElement.content, true).firstElementChild as T;
+
+        this.hostElement = document.getElementById(hostElementId) as U;        
 
         if(elementId){
             this.element.id = elementId
@@ -111,37 +114,34 @@ abstract class ProjectUI<T extends HTMLElement> {
      }
 
      private attach() {
-        app!.insertAdjacentElement(this.beforeEnd ?  'beforeend': "afterbegin", this.element);
+        this.hostElement.insertAdjacentElement(this.beforeEnd ?  'beforeend': "afterbegin", this.element);
     }
 
     abstract configure?():void
 
 }
 
-class ProjectList extends ProjectUI<HTMLTableSectionElement> {
+class ListItem extends ProjectUI<HTMLLIElement,HTMLUListElement> {
+    constructor(textContent:string,hostId:string){
+        super('single-project',true,hostId)
+        this.element.textContent = textContent
+    }
+
+    configure(): void {}
+}
+
+class ProjectList extends ProjectUI<HTMLTableSectionElement,HTMLDivElement> {
     currentProjects: Project[];
 
     constructor(private type: 'active' | 'finished'){
-        super('project-list',true,`${type}-projects`)
+        super('project-list',true,'app',`${type}-projects`)
 
         this.currentProjects = []
 
         this.configure()
         
     }
-
-    private renderProjects(){
-        const listEl = document.getElementById(`${this.type}-projects-list`) as HTMLUListElement        
-        
-        listEl.innerHTML = ''
-        for(const prjItem of this.currentProjects ){
-            const listItem = document.createElement('li')
-            listItem.textContent = prjItem.title
-            listEl.appendChild(listItem)
-        }
-
-    }
-
+    
     configure(): void {
         projectState.addListener((projects:Project[]) => {                        
             const filteredProjects = projects.filter(x =>ProjectStatus[x.status].toLowerCase() === this.type )
@@ -153,6 +153,18 @@ class ProjectList extends ProjectUI<HTMLTableSectionElement> {
         this.filloutList()
     }
 
+    private renderProjects(){
+        const listEl = document.getElementById(`${this.type}-projects-list`) as HTMLUListElement        
+        
+        listEl.innerHTML = ''
+        for(const prjItem of this.currentProjects ){
+            const listItem = new ListItem(prjItem.title,this.element.querySelector('ul')!.id)
+            listEl.appendChild(listItem.element)
+        }
+
+    }
+
+
     private filloutList(){
         this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + ' PROJECTS'
         this.element.querySelector('ul')!.id = `${this.type}-projects-list`
@@ -160,13 +172,13 @@ class ProjectList extends ProjectUI<HTMLTableSectionElement> {
 }
 
 
-class ProjectInput extends ProjectUI<HTMLFormElement> {
+class ProjectInput extends ProjectUI<HTMLFormElement,HTMLDivElement> {
     title: HTMLInputElement;
     description: HTMLInputElement;
     people: HTMLInputElement;
     submitBtn: HTMLButtonElement;
     constructor() {
-        super("project-input",false,'user-input')
+        super("project-input",false,'app','user-input')
 
         this.title = document.getElementById("title")! as HTMLInputElement;
 
