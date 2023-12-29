@@ -1,9 +1,9 @@
-import { Project, ProjectStatus } from "../models/project-model.js"
-import { ProjectUI } from "./base-component.js"
-import { DragTarget} from '../models/drag&drop.js'
-import { AutoBind } from "../decorators/autobind.js"
-import { projectState } from "../state/project-state.js"
-import { ListItem } from "./list-item-component.js"
+import { Project, ProjectStatus } from "../models/project-model"
+import { ProjectUI } from "./base-component"
+import { DragTarget} from '../models/drag&drop'
+import { AutoBind } from "../decorators/autobind"
+import { projectState } from "../state/project-state"
+import { ListItem } from "./list-item-component"
 
 export class ProjectList extends ProjectUI<HTMLTableSectionElement,HTMLDivElement> implements DragTarget {
     currentProjects: Project[];

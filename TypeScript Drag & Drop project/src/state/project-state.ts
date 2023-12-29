@@ -1,4 +1,4 @@
-import { Project, ProjectStatus } from "../models/project-model.js"
+import { Project, ProjectStatus } from "../models/project-model"
 
 export type Listener<T> = (items: T[]) => void
 
@@ -37,18 +37,18 @@ export class ProjectState extends State<Project> {
     moveProject(projectId:string){
         const projectToMove = this.projects.find(x => x.id === projectId)
 
-        if(!projectToMove){
-            throw 'Project not found'
+        if(projectToMove){
+           
+            
+            if(projectToMove.status === ProjectStatus.Active){
+                projectToMove.status = ProjectStatus.Finished 
+            }else{
+                projectToMove.status = ProjectStatus.Active 
+            }
+            
+            this.updateListeners()
+            
         }
-
-        if(projectToMove.status === ProjectStatus.Active){
-            projectToMove.status = ProjectStatus.Finished 
-        }else{
-            projectToMove.status = ProjectStatus.Active 
-        }
-
-        this.updateListeners()
-
     }
 
 
