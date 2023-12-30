@@ -1,11 +1,18 @@
-interface TodoListProps {
-    items:{id:string, text:string}[]
-}
+import { useContext } from "react"
+import { TodoItem } from "./TodoItem"
+import { TodoContext } from "./contexts/TodosContext"
 
-export const TodoList: React.FC<TodoListProps> = (props) => {
+// interface TodoListProps {
+//     items:{id:string, text:string}[]
+// }
+
+
+export const TodoList = () => {
+  const {todos} = useContext(TodoContext)
+
     return(
         <>
-        {props.items.map(item => <li key={item.id}>{item.text}</li>)}
+        {todos.map(item => <TodoItem todo={item} key={item.id} />)}
         </>
     )
 }

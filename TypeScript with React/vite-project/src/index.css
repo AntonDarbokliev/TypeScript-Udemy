@@ -6,3 +6,21 @@ html {
 body{
   margin: 0;
 }
+
+.TodoItem button{
+ height: 2rem;
+ border-radius: 5px;
+ border:none;
+ margin-left: 1rem; 
+}
+
+.TodoItem div{
+  display: flex;
+ }
+ 
+.TodoItem{
+  list-style: none;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  display: flex;
+ }
