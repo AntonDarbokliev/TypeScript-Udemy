@@ -1,17 +1,15 @@
+import { useState } from "react";
+import { AddTodo } from "./components/AddTodo";
 import { TodoList } from "./components/TodoList"
-
-interface Todo {
-  id:string,
-  text:string
-}
-
+import {Todo} from './components/shared/interfaces/TodoInterfaces'
 
 const App: React.FC = () => {
-  const todos:Todo[] = [{id:'1',text: 'Clean your room'}];
+  const [todos,setTodos] = useState<Todo[]>([])
 
   return (
     <>
-      <TodoList items={todos}/>    
+      <TodoList items={todos}/> 
+      <AddTodo setTodos={setTodos}/>
     </>
   )
 }
